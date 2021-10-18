@@ -1,16 +1,13 @@
 // All comments and characters entered by ^.^ following Victor Gordan
 
-/* CURRENT WORKSPACE GOAL 20:05 opengl course create 3d and 2d graphics w c++
-
-Current task - Adding Vertiex and Fragment Shaders
- Vertex Shader is a colleciton of points that allows for shape assembly
- into a primitive. Following rasterization into pixels, the fragment shader 
- allows coloring to the pixels.
+/* CURRENT WORKSPACE GOAL 29:22 opengl course create 3d and 2d graphics w c++
+https://www.youtube.com/watch?v=45MIykWJ-C4
  */
 
 #include<iostream>
 #include<glad/glad.h>
-/* 
+
+ /* 
 GLFW is an Open Source, multi - platform library for OpenGL, OpenGL ESand 
 Vulkan development on the desktop.It provides a simple API for creating
 windows, contextsand surfaces, receiving inputand events.
@@ -31,6 +28,7 @@ const char* fragmentShaderSource = "#version 330 core\n"
 "	FragColor = vec4(0.8f, 0.3f, 0.02f, 1.0f;\n"
 "}\n\0";
 
+// main function initializing our program
 int main()
 {
 	// ## WINDOW LOGIC ##
@@ -110,6 +108,47 @@ int main()
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
+	//create a reference buffer object VBO to score our vertex data
+	//create Vertex Array Object to pass multiple VBOs as pointers
+	GLuint VAO, VBO;
+
+	/* create Vertex Array Object prep for 1 vbo we've created and 
+	 point to our VAO reference */
+	glGenVertexArrays(1, &VAO);
+
+	//create buffer object VBO giving 1 3d object and point to reference
+	glGenBuffers(1, &VBO);
+
+	// binding VAO so we can work with it in current buffer
+	glBindVertexArray(VAO);
+
+	// binding object to impact current object in array buffer
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	/* 
+	Store our verticies in the VBO, type of buffer, size of buffer in bytes,
+	actual data, and use of the data (stream, static or dynamic) and draw
+	read or copy
+	*/
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	/* 
+	Make VAO readable by OpenGL with funciton glVertexAttributePointer
+	pass the index of the vertex attribute we want to use,
+	communicating with the vertex shader from the outside.
+	Position of vertex attribute, how many values per vertex- in our 
+	current case we have 3 floats, what kind of values we have- floats,
+	coordinates as integers- we don't, sprite of verticies - amount of
+	data between each vertices- the size of our 3 floats, offset - 
+	pointer to where our vertices begins in the array- the start in
+	our case so we'll do a void pointer
+	*/
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
 	/* 
 	buffer basics note- the next frame written in the background is the 
 	back buffer while front buffer frame is what is displayed at the moment
@@ -117,20 +156,39 @@ int main()
 	prepare a new buffer by clearing the buffer in rgb format with last
 	number, aka alpha number, setting transparency
 	*/
-
 	glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 
 	//execute the command we've prepared on the color buffer
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	//swap our buffers to display the color on the front buffer
+	/*
+	swap our buffers to display the color on the front buffer
+	updates the image each frame
+	*/
 	glfwSwapBuffers(window);
 
 	//keep the window open unless user or another function closes it
 	while (!glfwWindowShouldClose(window))
 	{
+		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glUseProgram(shaderProgram);
+		glBindVertexArray(VAO);
+		/*
+		draw the type of primitive we want to use, starting vertices index
+		and amount of vertices we want to draw - 3 for a triangle
+		*/
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glfwSwapBuffers(window);
+		//take care of all GLFW events
 		glfwPollEvents();
 	}
+
+	// delete the vertex buffer objects we created earlier
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteProgram(shaderProgram);
+
 	// delete the window when we're done with it
 	glfwDestroyWindow(window);
 
