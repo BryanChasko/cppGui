@@ -29,13 +29,14 @@ const char* vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
 "void main()\n"
 "{\n"
-" gl_Position = vec4*(aPos.x, aPos.y, aPos.z, 1.0);\n"
+" gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
 "}\0";
+//Fragment Shader source code
 const char* fragmentShaderSource = "#version 330 core\n"
 "out vec4 FragColor;\n"
 "void main()\n"
 "{\n"
-"	FragColor = vec4(0.8f, 0.3f, 0.02f, 1.0f;\n"
+"   FragColor = vec4(0.8f, 0.3f, 0.02f, 1.0f);\n"
 "}\n\0";
 
 // main function initializing our program
@@ -93,6 +94,19 @@ int main()
 	// compile above shader info into machine language and apply to buffer
 	glCompileShader(fragmentShader);
 
+	//wraping the shaders into a shader program 
+//create reference to create the program
+	GLuint shaderProgram = glCreateProgram();
+
+	//attach the shaders to the program just created
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	//place the shader program in a wrapper to pass the refences.
+	glLinkProgram(shaderProgram);
+	//delete the shaders once we have passed them into our program
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+
 	//Array of type GLfloat to create fragment shader triangle on
 	GLfloat vertices[] =
 	{
@@ -121,19 +135,6 @@ int main()
 		//Upper triangle
 		5, 4, 1
 	};
-
-	//wraping the shaders into a shader program 
-	//create reference to create the program
-	GLuint shaderProgram = glCreateProgram();
-
-	//attach the shaders to the program just created
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	//place the shader program in a wrapper to pass the refences.
-	glLinkProgram(shaderProgram);
-	//delete the shaders once we have passed them into our program
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
 
 	//create a reference buffer object VBO to score our vertex data
 	//create Vertex Array Object to pass multiple VBOs as pointers
