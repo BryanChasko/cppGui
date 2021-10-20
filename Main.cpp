@@ -57,35 +57,6 @@ int main()
 	// Load the package of OpenGl core functions
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	//Array of type GLfloat to create fragment shader triangle on
-	GLfloat vertices[] =
-	{
-		//every 3 floats represents one coordinate
-		//left corner
-		-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
-		//right corner
-		0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
-		//top corner
-		0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,
-		//Inner left
-		-0.05f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,
-		//Inner Right
-		0.05f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, 
-		//Inner Down
-		0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f
-	};
-
-	// create our index array
-	GLuint indices[] =
-	{
-		//Lower left triangle
-		0, 3, 5,
-		//Lower right triangle
-		3, 2, 4,
-		//Upper triangle
-		5, 4, 1
-	};
-
 	/* 
 	Create a GLFW window to display our GL assets. Takes 5 inputs:
 	width, height, name, full screen/max size, min window size 
@@ -121,6 +92,35 @@ int main()
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 	// compile above shader info into machine language and apply to buffer
 	glCompileShader(fragmentShader);
+
+	//Array of type GLfloat to create fragment shader triangle on
+	GLfloat vertices[] =
+	{
+		//every 3 floats represents one coordinate
+		//left corner
+		-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
+		//right corner
+		0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
+		//top corner
+		0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,
+		//Inner left
+		-0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,
+		//Inner Right
+		0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,
+		//Inner Down
+		0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f
+	};
+
+	// create our index array
+	GLuint indices[] =
+	{
+		//Lower left triangle
+		0, 3, 5,
+		//Lower right triangle
+		3, 2, 4,
+		//Upper triangle
+		5, 4, 1
+	};
 
 	//wraping the shaders into a shader program 
 	//create reference to create the program
