@@ -2,6 +2,16 @@
 
 /* CURRENT WORKSPACE GOAL 29:22 opengl course create 3d and 2d graphics w c++
 https://www.youtube.com/watch?v=45MIykWJ-C4
+INDEX BUFFERS - We can draw a triangle primitive between 3 vertices. 
+vertices 0, 1, and 2. But what if we want to have 3 triangles/3 vertices?
+Double the vertices without duplicates. We will accomplish this with 
+an index buffer that tells OpenGL what order to go over vertices.
+indices = [0, 4, 3,
+		   4, 1, 5,
+		   3, 5, 2]
+First - add the new vertices to our array GLfloat vertices[] =
+Second - create a GLuint indices array
+Third- create and index buffer
  */
 
 #include<iostream>
@@ -56,7 +66,24 @@ int main()
 		//right corner
 		0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
 		//top corner
-		0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f
+		0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,
+		//Inner left
+		-0.05f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,
+		//Inner Right
+		0.05f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, 
+		//Inner Down
+		0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f
+	};
+
+	// create our index array
+	GLuint indices[] =
+	{
+		//Lower left triangle
+		0, 3, 5,
+		//Lower right triangle
+		3, 2, 4,
+		//Upper triangle
+		5, 4, 1
 	};
 
 	/* 
@@ -110,7 +137,8 @@ int main()
 
 	//create a reference buffer object VBO to score our vertex data
 	//create Vertex Array Object to pass multiple VBOs as pointers
-	GLuint VAO, VBO;
+	//create referencec for our indeces values
+	GLuint VAO, VBO, EBO;
 
 	/* create Vertex Array Object prep for 1 vbo we've created and 
 	 point to our VAO reference */
@@ -118,6 +146,9 @@ int main()
 
 	//create buffer object VBO giving 1 3d object and point to reference
 	glGenBuffers(1, &VBO);
+
+	//create an object to hold values for our indexes buffer
+	glGenBuffers(1, &EBO);
 
 	// binding VAO so we can work with it in current buffer
 	glBindVertexArray(VAO);
@@ -131,6 +162,11 @@ int main()
 	read or copy
 	*/
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	//make our EBO current by binding it and specifying type array_buffer
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
 
 	/* 
 	Make VAO readable by OpenGL with funciton glVertexAttributePointer
@@ -148,6 +184,7 @@ int main()
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	/* 
 	buffer basics note- the next frame written in the background is the 
@@ -176,9 +213,11 @@ int main()
 		glBindVertexArray(VAO);
 		/*
 		draw the type of primitive we want to use, starting vertices index
-		and amount of vertices we want to draw - 3 for a triangle
+		and amount of vertices we want to draw - 9 for a triangle
+		data type we want to draw, and index of our indices
 		*/
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+//		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
 		//take care of all GLFW events
 		glfwPollEvents();
@@ -187,6 +226,7 @@ int main()
 	// delete the vertex buffer objects we created earlier
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 	glDeleteProgram(shaderProgram);
 
 	// delete the window when we're done with it
