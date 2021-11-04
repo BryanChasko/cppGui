@@ -4,6 +4,16 @@
 # But not these files...
 !.gitignore
 !Main.cpp
+!default.frag
+!default.vert
+!EBO.h
+!EBO.cpp
+!shaderClass.h
+!shaderClass.cpp
+!VAO.h
+!VAO.cpp
+!VBO.h
+!VBO.cpp
 
 # ...even if they are in subdirectories
 !*/
