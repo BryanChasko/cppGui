@@ -1,5 +1,6 @@
 #include "shaderClass.h"
 
+// Reads text file and outputs string with everything in the text file
 std::string get_file_contents(const char* filename)
 {
 	std::ifstream in(filename, std::ios::binary);
@@ -16,37 +17,52 @@ std::string get_file_contents(const char* filename)
 	throw(errno);
 }
 
+// Constructor that builds the shader program from 2 different shaders
 Shader::Shader(const char* vertexFile, const char* fragmentFile)
 {
+	//read vertexFile and fragmentFile and store the strings
 	std::string vertexCode = get_file_contents(vertexFile);
 	std::string fragmentCode = get_file_contents(fragmentFile);
 
+	//Convert the shader source strings into character arrays
 	const char* vertexSource = vertexCode.c_str();
 	const char* fragmentSource = fragmentCode.c_str();
 
+	//Create Vertex Shader Object and get its reference
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	//Attach Vertex Shader source to the Vertex Shader Object
 	glShaderSource(vertexShader, 1, &vertexSource, NULL);
+	//Compile the Vertex Shader into machine code
 	glCompileShader(vertexShader);
 
+	//Create Fragment Shader Object and get its reference
 	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	//Attach Fragment Shader source to the Fragment Shader Object
 	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
+	//Compile the Vertex Shader into machine code
 	glCompileShader(fragmentShader);
 
-	GLuint shaderProgram = glCreateProgram();
+	//Create Shader Program Object and get its reference
+	ID = glCreateProgram();
+	// Attach the Vertex and Fragment Shaders to the Shader Program
 	glAttachShader(ID, vertexShader);
 	glAttachShader(ID, fragmentShader);
+	//Wrap-up & link all the shaders together in the Shader Program
 	glLinkProgram(ID);
 
+	//Delete the now useless Vertex and Fragment Shader objects
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 }
 
 void Shader::Activate()
+//Activates the Shader Program
 {
 	glUseProgram(ID);
 }
 
 void Shader::Delete()
+// Deletes the Shader Program
 {
 	glDeleteProgram(ID);
 }
